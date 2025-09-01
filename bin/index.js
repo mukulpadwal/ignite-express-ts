@@ -10,7 +10,7 @@ import gradient from "gradient-string";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 🎨 Banner
+// Banner
 const banner = figlet.textSync("Ignite Express", {
   font: "Slant",
   horizontalLayout: "default",
@@ -19,7 +19,7 @@ const banner = figlet.textSync("Ignite Express", {
 console.log(gradient.pastel.multiline(banner));
 console.log("\n🚀 Welcome to Ignite Express CLI!\n");
 
-// 📝 Get project name
+// Get project name
 const projectName = process.argv[2];
 
 if (!projectName) {
@@ -28,25 +28,37 @@ if (!projectName) {
   process.exit(1);
 }
 
-// 📂 Define target dir
+// Define target dir
 const targetDir = path.join(process.cwd(), projectName);
 
-// ⚠️ Prevent overwriting
+// Prevent overwriting
 if (fs.existsSync(targetDir)) {
   console.error(`❌ Directory "${projectName}" already exists. Choose another name.`);
   process.exit(1);
 }
 
-// 📦 Copy base template
+// Copy base template
 const templateDir = path.join(__dirname, "../templates/base");
 fs.cpSync(templateDir, targetDir, { recursive: true });
-
 console.log(`📂 Created project folder: ${projectName}`);
 
-// 📍 Move into project
+// Remove .gitkeep files
+function removeGitkeep(dir) {
+  for (const file of fs.readdirSync(dir)) {
+    const fullPath = path.join(dir, file);
+    if (fs.statSync(fullPath).isDirectory()) {
+      removeGitkeep(fullPath);
+    } else if (file === ".gitkeep") {
+      fs.unlinkSync(fullPath);
+    }
+  }
+}
+removeGitkeep(targetDir);
+
+// Move into project
 process.chdir(targetDir);
 
-// 📦 Install deps
+// Install deps
 console.log("📦 Installing dependencies...\n");
 try {
   execSync("npm install", { stdio: "inherit" });
@@ -55,6 +67,6 @@ try {
   process.exit(1);
 }
 
-// ✅ Done
+// Done
 console.log(`\n✅ Project ready at ./${projectName}`);
 console.log(`👉 Next steps:\n   cd ${projectName} && npm run dev\n`);
