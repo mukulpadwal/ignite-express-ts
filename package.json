@@ -1,6 +1,6 @@
 {
   "name": "ignite-express-ts",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "CLI to bootstrap Express + TypeScript apps quickly",
   "main": "dist/index.js",
   "bin": {
