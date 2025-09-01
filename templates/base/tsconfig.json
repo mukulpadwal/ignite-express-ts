@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    /* Input & Output */
+    "rootDir": "src",              // where your TS source lives
+    "outDir": "dist",              // compiled JS output folder
+
+    /* Module & Target */
+    "module": "ESNext",            // use modern ES modules (for "type": "module" in package.json)
+    "moduleResolution": "node",    // resolve modules like Node.js
+    "target": "ES2020",            // good balance: async/await, optional chaining supported
+
+    /* Type Definitions */
+    "types": ["node"],             // include Node.js types
+    "lib": ["ES2020"],             // built-in JS features available
+
+    /* Safety & Best Practices */
+    "strict": true,                // enable all strict type checks
+    "esModuleInterop": true,       // allow default imports from CommonJS
+    "skipLibCheck": true,          // skip type checking of node_modules (faster builds)
+
+    /* Debugging */
+    "sourceMap": true              // generate .map files for debugging
+  },
+  "include": ["src"],              // files to compile
+  "exclude": ["node_modules", "dist"] // ignore build outputs & deps
+}

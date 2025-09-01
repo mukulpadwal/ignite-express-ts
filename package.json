@@ -1,0 +1,31 @@
+{
+  "name": "ignite-express-ts",
+  "version": "1.0.0",
+  "description": "CLI to bootstrap Express + TypeScript apps quickly",
+  "main": "dist/index.js",
+  "bin": {
+    "ignite-express-ts": "bin/index.js"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "templates"
+  ],
+  "keywords": [
+    "cli",
+    "express",
+    "typescript",
+    "starter",
+    "boilerplate"
+  ],
+  "author": "Mukul Padwal <mukulpadwal.me@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "figlet": "^1.8.2",
+    "gradient-string": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
