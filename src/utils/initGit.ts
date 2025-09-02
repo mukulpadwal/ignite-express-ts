@@ -9,7 +9,7 @@ export function initGit() {
     execSync("git add .", { stdio: "ignore" });
     execSync('git commit -m "chore: initial commit"', { stdio: "ignore" });
 
-    spinner.succeed("Git repository initialized.");
+    spinner.succeed(" Git repository initialized.");
   } catch {
     spinner.warn(
       "⚠️ Git not available or failed. Skipping git initialization."
