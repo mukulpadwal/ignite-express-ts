@@ -1,13 +1,18 @@
 import dotenv from "dotenv";
+import path from "path";
 
-// Load env file depending on NODE_ENV
+// Default env = development
+const nodeEnv = process.env.NODE_ENV || "development";
+
+// Load corresponding .env file (e.g., .env.development, .env.production)
 dotenv.config({
-  path: `.env.${process.env.NODE_ENV || "dev"}`,
+  path: path.resolve(process.cwd(), `.env.${nodeEnv}`),
 });
 
-const { PORT = "8080", NODE_ENV = "dev" } = process.env;
+// Provide safe defaults
+const { PORT = "8080", NODE_ENV = nodeEnv } = process.env;
 
 export const Config = {
-  PORT,
+  PORT: Number(PORT),
   NODE_ENV,
 };

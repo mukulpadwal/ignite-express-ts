@@ -6,6 +6,12 @@
   "bin": {
     "ignite-express-ts": "bin/index.js"
   },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "start": "node dist/index.js"
+  },
   "files": [
     "dist",
     "bin",
@@ -22,8 +28,8 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "figlet": "^1.8.2",
-    "gradient-string": "^3.0.0"
+    "chalk": "^5.6.0",
+    "figlet": "^1.8.2"
   },
   "engines": {
     "node": ">=18"
@@ -35,5 +41,11 @@
   "homepage": "https://github.com/mukulpadwal/ignite-express-ts#readme",
   "bugs": {
     "url": "https://github.com/mukulpadwal/ignite-express-ts/issues"
+  },
+  "devDependencies": {
+    "@types/figlet": "^1.7.0",
+    "@types/node": "^24.3.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
   }
 }
