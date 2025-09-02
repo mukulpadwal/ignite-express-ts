@@ -1,79 +1,67 @@
 #!/usr/bin/env node
-import { fileURLToPath } from "node:url";
+
 import path from "node:path";
 import fs from "node:fs";
-import { execSync } from "node:child_process";
-import figlet from "figlet";
-import { gradientText } from "./utils/gradient.js";
-import { removeGitkeep } from "./utils/removeGitKeep.js";
+import {
+  copyTemplate,
+  initGit,
+  installDependencies,
+  showBanner,
+  validateProjectName,
+} from "./utils/index.js";
 
-// __dirname in ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+function main() {
+  // Display CLI banner with gradient
+  showBanner();
 
-// Banner
-const banner = figlet.textSync("Ignite Express TS", {
-  font: "Slant",
-  horizontalLayout: "default",
-  verticalLayout: "default",
-});
-console.log(gradientText(banner, [255, 100, 100], [100, 100, 255]));
-console.log("\n🚀 Welcome to Ignite Express CLI!\n");
+  // Get the project name from CLI arguments
+  const rawName = process.argv[2];
 
-// Get project name
-const projectName = process.argv[2];
+  if (!rawName) {
+    console.error("❌ Please provide a project name:\n");
+    console.error("   ignite-express-ts my-app\n");
+    process.exit(1);
+  }
 
-if (!projectName) {
-  console.error("❌ Please provide a project name:\n");
-  console.error("   ignite-express-ts my-app\n");
-  process.exit(1);
-}
+  // Validate and sanitize project name
+  const projectName = validateProjectName(rawName);
 
-// Define target dir
-const targetDir = path.join(process.cwd(), projectName);
+  // Determine the target directory for the new project
+  const targetDir = path.join(process.cwd(), projectName);
 
-// Prevent overwriting
-if (fs.existsSync(targetDir)) {
-  console.error(
-    `❌ Directory "${projectName}" already exists. Choose another name.`
+  // Prevent overwriting existing directories
+  if (fs.existsSync(targetDir)) {
+    console.error(
+      `❌ Directory "${projectName}" already exists. Choose another name.`
+    );
+    process.exit(1);
+  }
+
+  // Copy the template files into the target directory
+  copyTemplate(targetDir);
+
+  // Change working directory to the project folder
+  process.chdir(targetDir);
+
+  // Install project dependencies via npm
+  installDependencies();
+
+  // Initialize git repository unless skipped via --no-git
+  const shouldInitGit = !process.argv.includes("--no-git");
+  if (shouldInitGit) initGit();
+
+  // Display final success message and next steps
+  console.log(`\n✅ Project ready at ./${projectName}`);
+  console.log(`👉 Next steps:`);
+  console.log(`   cd ${projectName}`);
+  console.log(`   npm run dev`);
+  console.log(
+    `\n💡 ${
+      shouldInitGit
+        ? "A new git repo has been initialized."
+        : "Git initialization skipped."
+    } (run \`git remote add origin <url>\` to connect it)`
   );
-  process.exit(1);
 }
 
-// Copy base template
-const templateDir = path.join(__dirname, "../templates/base");
-fs.cpSync(templateDir, targetDir, { recursive: true });
-console.log(`📂 Created project folder: ${projectName}`);
-
-removeGitkeep(targetDir);
-
-// Move into project
-process.chdir(targetDir);
-
-// Install deps
-console.log("📦 Installing dependencies...\n");
-try {
-  execSync("npm install", { stdio: "inherit" });
-} catch (err) {
-  console.error("❌ Failed to install dependencies.");
-  process.exit(1);
-}
-
-// Initialize git repo
-try {
-  execSync("git init", { stdio: "ignore" });
-  execSync("git add .", { stdio: "ignore" });
-  execSync('git commit -m "chore: initial commit"', { stdio: "ignore" });
-  console.log("📦 Initialized a new git repository.");
-} catch (err) {
-  console.warn("⚠️ Could not initialize git repository. Skipping...");
-}
-
-// Done
-console.log(`\n✅ Project ready at ./${projectName}`);
-console.log(`👉 Next steps:`);
-console.log(`   cd ${projectName}`);
-console.log(`   npm run dev`);
-console.log(
-  `\n💡 A new git repo has been initialized. (run \`git remote add origin <url>\` to connect it)`
-);
+main();
