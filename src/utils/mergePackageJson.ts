@@ -1,0 +1,27 @@
+import fs from "node:fs";
+
+export function mergePackageJson(snippetPath: string, targetPath: string) {
+  const snippet = JSON.parse(fs.readFileSync(snippetPath, "utf-8"));
+  const target = JSON.parse(fs.readFileSync(targetPath, "utf-8"));
+
+  if (snippet.dependencies) {
+    target.dependencies = {
+      ...target.dependencies,
+      ...snippet.dependencies,
+    };
+  }
+  if (snippet.devDependencies) {
+    target.devDependencies = {
+      ...target.devDependencies,
+      ...snippet.devDependencies,
+    };
+  }
+  if (snippet.scripts) {
+    target.scripts = {
+      ...target.scripts,
+      ...snippet.scripts,
+    };
+  }
+
+  fs.writeFileSync(targetPath, JSON.stringify(target, null, 2));
+}

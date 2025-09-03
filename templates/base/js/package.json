@@ -1,0 +1,22 @@
+{
+  "name": "express-js-template",
+  "version": "1.0.0",
+  "description": "",
+  "license": "MIT",
+  "author": "",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development node --watch src/server.js",
+    "build": "echo \"No build step required for JavaScript\"",
+    "start": "cross-env NODE_ENV=production node src/server.js",
+    "preview": "npm run start"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "cross-env": "^10.0.0"
+  }
+}

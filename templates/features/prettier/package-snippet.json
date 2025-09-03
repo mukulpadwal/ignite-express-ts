@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "prettier": "3.6.2"
+  },
+  "scripts": {
+    "format:check": "npx prettier . --check",
+    "format:fix": "npx prettier . --write"
+  }
+}

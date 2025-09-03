@@ -3,6 +3,7 @@
 import path from "node:path";
 import fs from "node:fs";
 import {
+  askQuestions,
   copyTemplate,
   initGit,
   installDependencies,
@@ -10,12 +11,12 @@ import {
   validateProjectName,
 } from "./utils/index.js";
 
-function main() {
+async function main() {
   // Display CLI banner with gradient
   showBanner();
 
   // Get the project name from CLI arguments
-  const rawName = process.argv[2];
+  let rawName = process.argv[2] || ".";
 
   if (!rawName) {
     console.error("❌ Please provide a project name:\n");
@@ -23,44 +24,54 @@ function main() {
     process.exit(1);
   }
 
-  // Validate and sanitize project name
-  const projectName = validateProjectName(rawName);
+  if (!rawName) {
+    rawName = ".";
+  }
 
   // Determine the target directory for the new project
-  const targetDir = path.join(process.cwd(), projectName);
+  const cwd = process.cwd();
+  const targetDir = rawName === "." ? cwd : path.join(cwd, rawName);
+
+  // Validate and sanitize project name
+  const projectName =
+    rawName === "." ? path.basename(cwd) : validateProjectName(rawName);
 
   // Prevent overwriting existing directories
-  if (fs.existsSync(targetDir)) {
+  if (rawName !== "." && fs.existsSync(targetDir)) {
     console.error(
       `❌ Directory "${projectName}" already exists. Choose another name.`
     );
     process.exit(1);
   }
 
-  // Copy the template files into the target directory
-  copyTemplate(targetDir);
+  // Ask questions (package manager, language, features)
+  const { packageManager, language, features, git } = await askQuestions();
+
+  // Copy base template + features
+  copyTemplate(targetDir, { language, features });
 
   // Change working directory to the project folder
   process.chdir(targetDir);
 
   // Install project dependencies via npm
-  installDependencies();
+  installDependencies(packageManager);
 
-  // Initialize git repository unless skipped via --no-git
-  const shouldInitGit = !process.argv.includes("--no-git");
-  if (shouldInitGit) initGit();
+  // Initialize git repository if user agreed
+  if (git) initGit();
 
   // Display final success message and next steps
   console.log(`\n✅ Project ready at ./${projectName}`);
   console.log(`👉 Next steps:`);
-  console.log(`   cd ${projectName}`);
-  console.log(`   npm run dev`);
+  if (rawName !== ".") {
+    console.log(`   cd ${projectName}`);
+  }
+  console.log(`   ${packageManager} run dev`);
   console.log(
     `\n💡 ${
-      shouldInitGit
-        ? "A new git repo has been initialized."
-        : "Git initialization skipped."
-    } (run \`git remote add origin <url>\` to connect it)`
+      git
+        ? "A new git repo has been initialized. (run `git remote add origin <url>` to connect it)"
+        : "Git initialization skipped. (run `git init` manually)"
+    } `
   );
 }
 
