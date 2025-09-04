@@ -57,8 +57,15 @@ export function copyTemplate(
 
       // Merge package.json snippet if present
       const snippetPath = path.join(featurePath, "package-snippet.json");
+
       if (fs.existsSync(snippetPath)) {
         mergePackageJson(snippetPath, path.join(targetDir, "package.json"));
+      }
+
+      const copiedSnippet = path.join(targetDir, "package-snippet.json");
+
+      if (fs.existsSync(copiedSnippet)) {
+        fs.unlinkSync(copiedSnippet);
       }
     } else {
       console.warn(`⚠️ Feature "${feature}" not found in templates/features`);

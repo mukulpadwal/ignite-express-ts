@@ -18,16 +18,6 @@ async function main() {
   // Get the project name from CLI arguments
   let rawName = process.argv[2] || ".";
 
-  if (!rawName) {
-    console.error("❌ Please provide a project name:\n");
-    console.error("   ignite-express-ts my-app\n");
-    process.exit(1);
-  }
-
-  if (!rawName) {
-    rawName = ".";
-  }
-
   // Determine the target directory for the new project
   const cwd = process.cwd();
   const targetDir = rawName === "." ? cwd : path.join(cwd, rawName);
@@ -44,7 +34,7 @@ async function main() {
     process.exit(1);
   }
 
-  // Ask questions (package manager, language, features)
+  // Ask questions (package manager, language, features, git)
   const { packageManager, language, features, git } = await askQuestions();
 
   // Copy base template + features
@@ -75,4 +65,8 @@ async function main() {
   );
 }
 
-main();
+main().catch((err) => {
+  console.error("❌ Something went wrong:");
+  console.error(err instanceof Error ? err.message : err);
+  process.exit(1);
+});
